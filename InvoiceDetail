@@ -1,0 +1,188 @@
+if (params.column.colId == 'FADET') {
+	params.data.ARATOPLAM = RoundBanker(params.data.FADET * params.data.FBFIYAT, 2);
+	params.data.DTOPLAM = RoundBanker(params.data.FADET * params.data.DBFIYAT, 2);
+};
+if (params.column.colId == 'ADET') {
+	params.data.ARATOPLAM = RoundBanker(params.data.ADET * params.data.BFIYAT, 2);
+	params.data.DTOPLAM = RoundBanker(params.data.ADET * params.data.DBFIYAT, 2);
+};
+
+if (params.column.colId == 'BFIYAT') {
+	params.data.ARATOPLAM = RoundBanker(params.data.ADET * params.data.BFIYAT, 2);
+	params.data.DTOPLAM = RoundBanker(params.data.ADET * params.data.DBFIYAT, 2);
+};
+
+if (params.column.colId == 'ARATOPLAM') {	
+	if (params.oldValue != params.newValue) {
+		if (params.data.ADET != 0) {
+			params.data.BFIYAT = params.data.ARATOPLAM / params.data.ADET;
+			params.data.DBFIYAT = params.data.DTOPLAM / params.data.ADET;
+		}
+
+		if (params.data.FADET != 0) {
+			params.data.FBFIYAT = params.data.ARATOPLAM / params.data.FADET;
+			params.data.DFBFIYAT = params.data.DTOPLAM / params.data.FADET;
+		}
+	}
+}
+
+if (params.column.colId == 'DTOPLAM') {
+	if (params.data.KUR != 0) {
+		params.data.ARATOPLAM = params.data.DTOPLAM * params.data.KUR;
+	} else {
+		params.data.ARATOPLAM = params.data.DTOPLAM;
+	}
+	
+	if(params.data.ADET == ""){
+		params.data.ADET = 1
+	}
+
+	if (params.data.ADET != 0) {
+		params.data.BFIYAT = params.data.ARATOPLAM / params.data.ADET;
+		params.data.DBFIYAT = params.data.DTOPLAM / params.data.ADET;
+	}
+
+	if (params.data.FADET != 0) {
+		params.data.FBFIYAT = params.data.ARATOPLAM / params.data.FADET;
+		params.data.DBFIYAT = params.data.DTOPLAM / params.data.FADET;
+	}
+}
+
+if (params.column.colId == 'SATIRINDT') {
+	if (params.data.KUR != 0) {
+		params.data.DSATIRINDT = params.data.SATIRINDT / params.data.KUR;
+	} else {
+		params.data.DSATIRINDT = params.data.SATIRINDT;
+	}
+}
+
+if (params.column.colId == 'DSATIRINDT') {
+	if (params.data.KUR != 0) {
+		params.data.SATIRINDT = params.data.DSATIRINDT * params.data.KUR;
+	} else {
+		params.data.SATIRINDT = params.data.DSATIRINDT;
+	}
+}
+
+if (params.column.colId == 'OTVMATRAH') {
+	if (params.data.KUR != 0) {
+		params.data.DOTVMATRAH = params.data.OTVMATRAH / params.data.KUR;
+	} else {
+		params.data.DOTVMATRAH = params.data.OTVMATRAH;
+	}
+}
+
+if (params.column.colId == 'DOTVMATRAH') {
+	if (params.data.KUR != 0) {
+		params.data.OTVMATRAH = params.data.DOTVMATRAH * params.data.KUR;
+	} else {
+		params.data.OTVMATRAH = params.data.DOTVMATRAH;
+	}
+}
+
+function CalcAraToplam(Adet, BFiyat) {	
+	return Adet * BFiyat;
+}
+
+function CalcNetToplam(Adet, BFiyat, SatirInd, SatirInd2, SatirIndT) {
+
+	return Adet * BFiyat * ((100 - SatirInd) / 100) * ((100 - SatirInd2) / 100) - SatirIndT;
+}
+
+function CalcIndToplam(Adet, BirimFiyat, NetToplam) {
+	return Adet * BirimFiyat - NetToplam;
+}
+
+function CalcOtvTutar(OtvMatrah, OtvOran) {
+	return (OtvMatrah || 0) * (OtvOran || 0) / 100;
+}
+
+function CalcOivTutar(NetToplam, OivOran) {
+	return NetToplam * (OivOran || 0) / 100;
+}
+
+function CalcKdvMatrah(NetToplam, OtvTutar) {
+	return NetToplam + (OtvTutar || 0);
+}
+
+function CalcKdvTutar(KdvMatrah, Kdv, YuvarlananKdvTutar) {
+	return KdvMatrah * Kdv / 100 - YuvarlananKdvTutar;
+}
+
+function CalcTevkifatTutar(KdvTutari, TevOran) {
+	return KdvTutari * ToParseNan(TevOranBul(TevOran));
+}
+
+function CalcKdvliToplam(KdvMatrah, KdvTutar, KdvTutar2, TevkifatTutar) {
+	return KdvMatrah + (KdvTutar - (TevkifatTutar || 0)) + (KdvTutar2 || 0);
+}
+
+function ToParseNan(num) {
+	return num || 0;
+}
+
+function RoundBanker(value, decimalPoint) {
+	try {
+		var result = 0;
+		if (value < 0) {
+			result = Math.floor((value * Math.pow(10, decimalPoint)) - 0.5) / Math.pow(10, decimalPoint)
+		} else {
+			result = Math.floor((value * Math.pow(10, decimalPoint)) + 0.5) / Math.pow(10, decimalPoint)
+		}
+		return result
+	} catch (error) {
+		console.log(error)
+	}
+
+}
+
+function TevOranBul(TevOran) {
+	try {
+		var x;
+		var arr;
+		if (TevOran.toString().trim() == '')
+			return 0;
+		arr = TevOran.split('/');
+		x = parseFloat(arr[0]) / parseFloat(arr[1]);
+		return x;
+	} catch (error) {
+
+		return 0;
+	}
+
+}
+
+var genelToplam = function () {
+	var gToplam = 0;
+	this.agGrid.api.forEachNode(
+		rowNode => {
+		gToplam += rowNode.data.NETTOPLAM;
+	});
+	return gToplam;
+}
+
+this.recordService.formGroup.get('GTOPLAM').setValue(genelToplam.bind(this).apply())
+
+params.data.ARATOPLAM = CalcAraToplam(ToParseNan(params.data.FADET), ToParseNan(params.data.FBFIYAT));
+
+params.data.NETTOPLAM = CalcNetToplam(ToParseNan(params.data.FADET), ToParseNan(params.data.FBFIYAT), ToParseNan(params.data.SATIRIND), ToParseNan(params.data.SATIRIND2), ToParseNan(params.data.SATIRINDT));
+
+params.data.INDTOPLAM = CalcIndToplam(ToParseNan(params.data.FADET), ToParseNan(params.data.FBFIYAT), ToParseNan(params.data.NETTOPLAM));
+
+params.data.OTVTUTAR = CalcOtvTutar(ToParseNan(params.data.OTVMATRAH), ToParseNan(params.data.OTVORAN));
+
+params.data.OIVTUTAR = CalcOivTutar(ToParseNan(params.data.NETTOPLAM), ToParseNan(params.data.OIVORAN));
+
+params.data.KDVMATRAH = CalcKdvMatrah(ToParseNan(params.data.NETTOPLAM), ToParseNan(params.data.OTVTUTAR));
+
+params.data.KDVTUTARI = CalcKdvTutar(ToParseNan(params.data.KDVMATRAH), ToParseNan(params.data.KDV), ToParseNan(params.data.YUVARLANANKDVTUTAR));
+
+params.data.KDVTUTARI2 = CalcKdvTutar(ToParseNan(params.data.KDVMATRAH), ToParseNan(params.data.KDV2), 0);
+
+params.data.TEVKIFATTUTARI = CalcTevkifatTutar(ToParseNan(params.data.KDVTUTARI), ToParseNan(params.data.TEVORAN));
+
+params.data.KDVLITOPLAM = CalcKdvliToplam(ToParseNan(params.data.KDVMATRAH), ToParseNan(params.data.KDVTUTARI), ToParseNan(params.data.KDVTUTAR2), ToParseNan(params.data.TEVKIFATTUTARI));
+
+if(params.data.FADET == undefined){
+	params.data.FADET = 1
+}

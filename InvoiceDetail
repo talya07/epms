@@ -1,10 +1,12 @@
 if (params.column.colId == 'FADET') {
 	params.data.ARATOPLAM = RoundBanker(params.data.FADET * params.data.FBFIYAT, 2);
 	params.data.DTOPLAM = RoundBanker(params.data.FADET * params.data.DBFIYAT, 2);
+	params.data.ADET = params.data.FADET;
 };
 if (params.column.colId == 'ADET') {
 	params.data.ARATOPLAM = RoundBanker(params.data.ADET * params.data.BFIYAT, 2);
 	params.data.DTOPLAM = RoundBanker(params.data.ADET * params.data.DBFIYAT, 2);
+	params.data.FADET = params.data.ADET;
 };
 
 if (params.column.colId == 'BFIYAT') {

@@ -1,3 +1,20 @@
+if (params.column.colId == 'STOKID') {
+	this.api.select({
+		Object: 'QMUH_STOKSONALIS',
+		Where: [{
+				Column: 'STOKID',
+				Operator: '=',
+				Value: params.data.STOKID
+			}
+		],
+		Select: ['BFIYAT', 'SBIRIMI']
+	}).then(r => {
+		console.log(r.ResultSets[0]);
+		params.data.BFIYAT = r.ResultSets[0][0].BFIYAT;
+		params.data.FBFIYAT = r.ResultSets[0][0].BFIYAT;
+		params.data.BIRIM = r.ResultSets[0][0].SBIRIMI
+	})
+};
 if (params.column.colId == 'FADET') {
 	params.data.ARATOPLAM = RoundBanker(params.data.FADET * params.data.FBFIYAT, 2);
 	params.data.DTOPLAM = RoundBanker(params.data.FADET * params.data.DBFIYAT, 2);
@@ -12,7 +29,7 @@ if (params.column.colId == 'BFIYAT') {
 	params.data.DTOPLAM = RoundBanker(params.data.ADET * params.data.DBFIYAT, 2);
 };
 
-if (params.column.colId == 'ARATOPLAM') {	
+if (params.column.colId == 'ARATOPLAM') {
 	if (params.oldValue != params.newValue) {
 		if (params.data.ADET != 0) {
 			params.data.BFIYAT = params.data.ARATOPLAM / params.data.ADET;
@@ -32,8 +49,8 @@ if (params.column.colId == 'DTOPLAM') {
 	} else {
 		params.data.ARATOPLAM = params.data.DTOPLAM;
 	}
-	
-	if(params.data.ADET == ""){
+
+	if (params.data.ADET == "") {
 		params.data.ADET = 1
 	}
 
@@ -80,7 +97,7 @@ if (params.column.colId == 'DOTVMATRAH') {
 	}
 }
 
-function CalcAraToplam(Adet, BFiyat) {	
+function CalcAraToplam(Adet, BFiyat) {
 	return Adet * BFiyat;
 }
 
@@ -183,6 +200,20 @@ params.data.TEVKIFATTUTARI = CalcTevkifatTutar(ToParseNan(params.data.KDVTUTARI)
 
 params.data.KDVLITOPLAM = CalcKdvliToplam(ToParseNan(params.data.KDVMATRAH), ToParseNan(params.data.KDVTUTARI), ToParseNan(params.data.KDVTUTAR2), ToParseNan(params.data.TEVKIFATTUTARI));
 
-if(params.data.FADET == undefined){
+if (params.data.FADET == undefined) {
 	params.data.FADET = 1
 }
+
+this.recordService['abc']();
+this.changeCellValue(params.node, 'ARATOPLAM', params.data.ARATOPLAM);
+this.changeCellValue(params.node, 'NETTOPLAM', params.data.NETTOPLAM);
+this.changeCellValue(params.node, 'INDTOPLAM', params.data.INDTOPLAM);
+this.changeCellValue(params.node, 'KDVMATRAH', params.data.KDVMATRAH);
+this.changeCellValue(params.node, 'KDVTUTARI', params.data.KDVTUTARI);
+this.changeCellValue(params.node, 'TEVKIFATTUTARI', params.data.TEVKIFATTUTARI);
+this.changeCellValue(params.node, 'KDVLITOPLAM', params.data.KDVLITOPLAM);
+this.changeCellValue(params.node, 'SATIRINDT', params.data.SATIRINDT);
+this.changeCellValue(params.node, 'BFIYAT', params.data.BFIYAT);
+this.changeCellValue(params.node, 'FBFIYAT', params.data.FBFIYAT);
+this.changeCellValue(params.node, 'ADET', params.data.ADET);
+this.changeCellValue(params.node, 'FADET', params.data.FADET);

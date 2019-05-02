@@ -217,3 +217,4 @@ this.changeCellValue(params.node, 'BFIYAT', params.data.BFIYAT);
 this.changeCellValue(params.node, 'FBFIYAT', params.data.FBFIYAT);
 this.changeCellValue(params.node, 'ADET', params.data.ADET);
 this.changeCellValue(params.node, 'FADET', params.data.FADET);
+;
